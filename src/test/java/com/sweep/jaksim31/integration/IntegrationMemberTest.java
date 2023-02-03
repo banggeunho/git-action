@@ -136,7 +136,6 @@ class IntegrationMemberTest {
                     .andExpect(content().string(LOGIN_ID+ SuccessResponseType.IS_MEMBER_SUCCESS.getMessage()))
                     .andDo(MockMvcResultHandlers.print(System.out));
         }
-
         @Test
         @DisplayName("[정상] 4-1.로그인")
         @Order(4)
