@@ -14,7 +14,7 @@ jobs:
   ###### 본문 내용과 관련 없는 Job, 빌드 테스트
   build:
     # ubuntu 환경에서 실행 (환경은 github이 제공)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     # 각 단계
     steps:
       # 소스코드 체크아웃
@@ -54,7 +54,7 @@ jobs:
       #### 아래부터 sonarqube와 관련있는 부분 시작
   analysis:
     # ubuntu 환경에서 실행 (환경은 github이 제공)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     # 이 Job에서 사용할 환경변수
     env:
       # KEY - VALUE
