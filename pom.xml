@@ -18,10 +18,10 @@
         <skip.unit.tests>false</skip.unit.tests>
         <project.test.result.directory>${project.build.directory}/test-results</project.test.result.directory>
 
-        <sonar.host.url>http://210.109.61.124:8080</sonar.host.url>
-        <sonar.login>{loginId}</sonar.login>
-        <sonar.projectKey>jaksim31</sonar.projectKey>
-        <sonar.projectName>test</sonar.projectName>
+
+<!--        <sonar.login>{loginId}</sonar.login>-->
+<!--        <sonar.projectKey>jaksim31</sonar.projectKey>-->
+<!--        <sonar.projectName>test</sonar.projectName>-->
         <sonar.sources>src</sonar.sources>
         <sonar.language>java</sonar.language>
         <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
