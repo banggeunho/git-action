@@ -32,6 +32,15 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: 4.2
+          mongodb-username: sweep
+          mongodb-password: sweep
+          mongodb-db: jaksim31-dev
+          mongodb-port: 27017
+
       - name: pwd
         run: ls -al
       - name: submodule check
