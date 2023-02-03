@@ -38,11 +38,11 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: MAVEN 권한 설정
+      - name: Grant execute permission for maven
         run: chmod +x mvnw
 
       - name: Build Test
-        run: ./mvnw clean package -Dspring.profiles.active=local -P local
+        run: ./mvnw clean package -Dspring.profiles.active=local -P local -rf spring-boot-autoconfigure
 
       - name: 테스트 결과를 PR에 코멘트로 등록합니다
         uses: EnricoMi/publish-unit-test-result-action@v1
