@@ -1,6 +1,7 @@
 # workflow의 이름
 name: backend-build-test
 
+
 # PR 요청에 대해
 on:
   pull_request:
@@ -11,6 +12,11 @@ on:
     types: [opened, assigned, synchronize, labeled, reopened]
 
 jobs:
+  env:
+    # KEY - VALUE
+    SONARQUBE_ID: jaksim31
+    SONARQUBE_URL: ${{ secrets.SONARQUBE_URL }}
+    PR_NUMBER: ${{ github.event.pull_request.number }}
   ###### 본문 내용과 관련 없는 Job, 빌드 테스트
   build:
     # ubuntu 환경에서 실행 (환경은 github이 제공)
@@ -34,18 +40,20 @@ jobs:
 
       - name: Build Test
         run: ./mvnw clean package -Dspring.profiles.active=local -P local
+
+      - name: 테스트 결과를 PR에 코멘트로 등록합니다
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: '**/target/surefire-reports/TEST-*.xml'
+
+      - name: 테스트 실패 시, 실패한 코드 라인에 Check 코멘트를 등록합니다
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/target/surefire-reports/TEST-*.xml'
+          token: ${{ secrets.SUBMODULE_ACCESS_TOKEN }}
       #### 아래부터 sonarqube와 관련있는 부분 시작
-  analysis:
-    needs: build
-    # ubuntu 환경에서 실행 (환경은 github이 제공)
-    runs-on: ubuntu-20.04
-    # 이 Job에서 사용할 환경변수
-    env:
-      # KEY - VALUE
-      SONARQUBE_ID: jaksim31
-      SONARQUBE_URL: ${{ secrets.SONARQUBE_URL }}
-      PR_NUMBER: ${{ github.event.pull_request.number }}
-    steps:
       - name: Checkout source code
         uses: actions/checkout@v2
         with:
