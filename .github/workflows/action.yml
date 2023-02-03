@@ -12,13 +12,13 @@ on:
     types: [opened, assigned, synchronize, labeled, reopened]
 
 jobs:
-  env:
-    # KEY - VALUE
-    SONARQUBE_ID: jaksim31
-    SONARQUBE_URL: ${{ secrets.SONARQUBE_URL }}
-    PR_NUMBER: ${{ github.event.pull_request.number }}
   ###### 본문 내용과 관련 없는 Job, 빌드 테스트
-  build:
+  test:
+    env:
+      # KEY - VALUE
+      SONARQUBE_ID: jaksim31
+      SONARQUBE_URL: ${{ secrets.SONARQUBE_URL }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
     # ubuntu 환경에서 실행 (환경은 github이 제공)
     runs-on: macos-latest
     # 각 단계
