@@ -1,6 +1,7 @@
 package com.sweep.jaksim31.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sweep.jaksim31.Jaksim31Application;
 import com.sweep.jaksim31.config.EmbeddedRedisConfig;
 import com.sweep.jaksim31.domain.members.MemberRepository;
 import com.sweep.jaksim31.domain.members.Members;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -49,6 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ImportAutoConfiguration(EmbeddedRedisConfig.class)
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
+@ContextConfiguration(classes = Jaksim31Application.class)
 class IntegrationMemberTest {
     private static final String LOGIN_ID = "loginId";
     private static  String username = "geunho";

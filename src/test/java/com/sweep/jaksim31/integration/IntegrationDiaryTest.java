@@ -1,6 +1,7 @@
 package com.sweep.jaksim31.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sweep.jaksim31.Jaksim31Application;
 import com.sweep.jaksim31.config.EmbeddedRedisConfig;
 import com.sweep.jaksim31.domain.diary.Diary;
 import com.sweep.jaksim31.domain.diary.DiaryRepository;
@@ -30,6 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -61,6 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ImportAutoConfiguration(EmbeddedRedisConfig.class)
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
+@ContextConfiguration(classes = Jaksim31Application.class)
 class IntegrationDiaryTest {
     private static final String LOGIN_ID = "kjh@test.com";
     private static final String PASSWORD = "password";
