@@ -56,18 +56,14 @@ jobs:
         with:
           report_paths: '**/target/surefire-reports/TEST-*.xml'
           token: ${{ secrets.SUBMODULE_ACCESS_TOKEN }}
-      #### 아래부터 sonarqube와 관련있는 부분 시작
-      - name: Checkout source code
-        uses: actions/checkout@v2
-        with:
-          submodules: true
-          token: ${{ secrets.SUBMODULE_ACCESS_TOKEN }}
 
       # 위에서 설정했던 정적코드 전송 태스크 실행
       - name: Sonaqube Analysis
+        if: always()
         run: ./mvnw sonar:sonar -Dsonar.host.url=${{ env.SONARQUBE_URL }} -Dsonar.projectKey=${{ env.SONARQUBE_ID }} -Dsonar.projectName=${{ env.SONARQUBE_ID }}-${{ env.PR_NUMBER }} -Dsonar.login=${{ secrets.SONARQUBE_ACCESS_TOKEN }}
 
       - name: Comment Sonarqube URL
+        if: always()
         uses: actions/github-script@v4
         with:
           # 이슈에 코멘트를 달아주는 스크립트 실행
