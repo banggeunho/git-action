@@ -26,6 +26,12 @@ jobs:
           # secrets 변수는 github 세팅에서 미리 세팅한 데이터
           token: ${{ secrets.SUBMODULE_ACCESS_TOKEN }}
 
+      - name: Install JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
       - name: pwd
         run: ls -al
       - name: submodule check
