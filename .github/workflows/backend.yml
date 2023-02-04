@@ -82,7 +82,7 @@ jobs:
       # main 브랜치에 push할 경우 CD job에 jar file 업로드
       - name: (Push & Main) Archive production artifacts
         if: github.event_name == 'push' && contains(github.ref, 'main')
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: target
           path: target/*.jar
