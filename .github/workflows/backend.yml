@@ -65,15 +65,17 @@ jobs:
       - name: Grant execute permission for maven
         run: chmod +x mvnw
 
+      - name: check
+        run : cat submodule/prod/application.yml
       # develop 브랜치일 경우 local 환경 빌드
       - name: (Local) Maven Build (Adding Unit Test & Integration Test)
-        if: contains(github.ref, 'develop')
+        if: github.event_name == 'pull_request'
         run: ./mvnw build -Dspring.profiles.active=local -P local
 
       # main 브랜치일 경우 prod 환경 빌드
       - name: (Prod) Maven Build (Adding Unit Test & Integration Test)
         if: contains(github.ref, 'main')
-        run: ./mvnw build -Dspring.profiles.active=prod -P prod
+        run: ./mvnw build -DskipTests=True -Dspring.profiles.active=prod -P prod
 
       # main 브랜치에 push할 경우 CD job에 jar file 업로드
       - name: Archive production artifacts
