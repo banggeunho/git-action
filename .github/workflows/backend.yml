@@ -37,13 +37,6 @@ jobs:
     runs-on: macos-latest
     # 각 단계
     steps:
-      # 레디스 설치 및 시작
-      - name: Start Redis
-        if: contains(github.ref, 'main')
-        uses: supercharge/redis-github-action@1.4.0
-        with:
-          redis-version: ${{ matrix.redis-version }}
-          redis-port: 6379
 
       # 소스코드 체크아웃
       - name: Checkout source code
