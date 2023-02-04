@@ -63,7 +63,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ImportAutoConfiguration(EmbeddedRedisConfig.class)
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
-@ContextConfiguration(classes = Jaksim31Application.class)
 class IntegrationDiaryTest {
     private static final String LOGIN_ID = "kjh@test.com";
     private static final String PASSWORD = "password";
