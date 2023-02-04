@@ -28,7 +28,8 @@ on:
 jobs:
   ###### 본문 내용과 관련 없는 Job, 빌드 테스트
   Backend-CI:
-
+    # Docker Hub image that `container-job` executes in
+    container: node:10.18-jessie
     # Service containers to run with `container-job`
     services:
       if: contains(github.ref, 'main')
