@@ -36,7 +36,9 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'
-          distribution: 'temurin'
+          distribution: 'adopt'
+          architecture: 'x64'
+          cache: 'maven'
 
       - name: Grant execute permission for maven
         run: chmod +x mvnw
