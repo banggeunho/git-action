@@ -13,7 +13,7 @@
 # ${{ secrets.REMOTE_USERNAME }} : 배포 서버 USERNAME
 # ${{ secrets.REMOTE_SSH_KEY }} : 배포 서버 연결을 위한 SSH KEY
 
-name: Backend CI (Pull request on develop, main) & CD (push on main)
+name: Backend CI & CD (Pull request on develop, main) (push on main)
 
 # PR 요청에 대해
 on:
@@ -74,12 +74,12 @@ jobs:
         if: github.event_name == 'pull_request'
         run: ./mvnw clean install -Dspring.profiles.active=local -P local
 
-      # main 브랜치일 경우 prod 환경 빌드
+      # main 브랜치에 push 할 경우 prod 환경 빌드
       - name: (Push & Main) Maven Build (Skip Unit Test & Integration Test)
         if: contains(github.ref, 'main') && github.event_name == 'push'
         run: ./mvnw clean install -DskipTests=True -Dspring.profiles.active=prod -P prod
 
-      # main 브랜치에 push할 경우 CD job에 jar file 업로드
+      # main 브랜치에 push 할 경우 CD job에 jar file 업로드
       - name: (Push & Main) Archive production artifacts
         if: github.event_name == 'push' && contains(github.ref, 'main')
         uses: actions/upload-artifact@v3
