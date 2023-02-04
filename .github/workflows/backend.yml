@@ -28,6 +28,21 @@ on:
 jobs:
   ###### 본문 내용과 관련 없는 Job, 빌드 테스트
   Backend-CI:
+
+    # Service containers to run with `container-job`
+    services:
+      if: contains(github.ref, 'main')
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
       # KEY - VALUE
       SONARQUBE_ID: jaksim31
