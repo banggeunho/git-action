@@ -66,7 +66,9 @@ jobs:
         run: chmod +x mvnw
 
       - name: check
-        run : cat submodule/prod/application.yml
+        run : | 
+            cat submodule/main/prod/application.yml
+
       # develop 브랜치일 경우 local 환경 빌드
       - name: (Local) Maven Build (Adding Unit Test & Integration Test)
         if: github.event_name == 'pull_request'
