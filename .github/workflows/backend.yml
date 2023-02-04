@@ -65,12 +65,12 @@ jobs:
         run: chmod +x mvnw
 
       # develop 브랜치일 경우 local 환경 빌드
-      - name: [Local Env] Maven Build (Adding Unit Test & Integration Test)
+      - name: (Local) Maven Build (Adding Unit Test & Integration Test)
         if: contains(github.ref, 'develop')
         run: ./mvnw build -Dspring.profiles.active=local -P local
 
       # main 브랜치일 경우 prod 환경 빌드
-      - name: [Prod Env] Maven Build (Adding Unit Test & Integration Test)
+      - name: (Prod) Maven Build (Adding Unit Test & Integration Test)
         if: contains(github.ref, 'main')
         run: ./mvnw build -Dspring.profiles.active=prod -P prod
 
