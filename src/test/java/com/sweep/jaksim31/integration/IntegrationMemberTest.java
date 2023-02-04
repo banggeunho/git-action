@@ -51,8 +51,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ImportAutoConfiguration(EmbeddedRedisConfig.class)
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
-@ContextConfiguration(classes = Jaksim31Application.class)
-@TestMethodOrder(value = MethodOrderer.OrderAnnotation.class) // 메소드 순서 지정
 class IntegrationMemberTest {
     private static final String LOGIN_ID = "loginId";
     private static  String username = "geunho";
@@ -66,10 +64,6 @@ class IntegrationMemberTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private MemberServiceImpl memberService;
     @Autowired
     private MemberRepository memberRepository;
 
