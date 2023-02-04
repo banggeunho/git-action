@@ -75,7 +75,7 @@ jobs:
         run: ./mvnw clean install -Dspring.profiles.active=local -P local
 
       # main 브랜치일 경우 prod 환경 빌드
-      - name: (Push & Main) Maven Build (Adding Unit Test & Integration Test)
+      - name: (Push & Main) Maven Build (Skip Unit Test & Integration Test)
         if: contains(github.ref, 'main') && github.event_name == 'push'
         run: ./mvnw clean install -DskipTests=True -Dspring.profiles.active=prod -P prod
 
@@ -185,5 +185,5 @@ jobs:
           username: ${{ secrets.REMOTE_USERNAME }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
           script_stop: true
-          script: chmod +x /home/centos/deploy/deploy.sh && sh /home/centos/deploy/deploy.sh
+          script: chmod +x /home/centos/deploy/scripts/deploy.sh && sh /home/centos/deploy/scripts/deploy.sh
 
