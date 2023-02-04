@@ -20,7 +20,7 @@ jobs:
       SONARQUBE_URL: ${{ secrets.SONARQUBE_URL }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
     # ubuntu 환경에서 실행 (환경은 github이 제공)
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     # 각 단계
     steps:
       # 소스코드 체크아웃
