@@ -70,31 +70,31 @@ jobs:
             cat submodule/main/prod/application.yml
 
       # develop 브랜치일 경우 local 환경 빌드
-      - name: (Local) Maven Build (Adding Unit Test & Integration Test)
+      - name: (PR) Maven Build (Adding Unit Test & Integration Test)
         if: github.event_name == 'pull_request'
         run: ./mvnw build -Dspring.profiles.active=local -P local
 
       # main 브랜치일 경우 prod 환경 빌드
-      - name: (Prod) Maven Build (Adding Unit Test & Integration Test)
-        if: contains(github.ref, 'main')
+      - name: (Push & Main) Maven Build (Adding Unit Test & Integration Test)
+        if: contains(github.ref, 'main') && github.event_name == 'push'
         run: ./mvnw build -DskipTests=True -Dspring.profiles.active=prod -P prod
 
       # main 브랜치에 push할 경우 CD job에 jar file 업로드
-      - name: Archive production artifacts
+      - name: (Push & Main) Archive production artifacts
         if: github.event_name == 'push' && contains(github.ref, 'main')
         uses: actions/upload-artifact@v1
         with:
           name: target
           path: target/*.jar
 
-      - name: Write the testing result on PR
+      - name: (PR) Write the testing result on PR
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         if: always() && github.event_name == 'pull_request'
         with:
           files: '**/target/surefire-reports/TEST-*.xml'
           comment_title: 'Jaksim31 Unit & Integration Test Results'
 
-      - name: Check Comment on the Code line.
+      - name: (PR) Check Comment on the Code line.
         uses: mikepenz/action-junit-report@v3
         if: always() && github.event_name == 'pull_request'
         with:
@@ -102,11 +102,11 @@ jobs:
           token: ${{ secrets.SUBMODULE_ACCESS_TOKEN }}
 
       # 위에서 설정했던 정적코드 전송 태스크 실행
-      - name: Sonarqube Analysis
+      - name: (PR) Sonarqube Analysis
         if: always() && github.event_name == 'pull_request'
         run: ./mvnw sonar:sonar -Dsonar.host.url=${{ env.SONARQUBE_URL }} -Dsonar.projectKey=${{ env.SONARQUBE_ID }} -Dsonar.projectName=${{ env.SONARQUBE_ID }}-${{ env.PR_NUMBER }} -Dsonar.login=${{ secrets.SONARQUBE_ACCESS_TOKEN }}
 
-      - name: Comment Sonarqube URL
+      - name: (PR) Comment Sonarqube URL
         if: always() && github.event_name == 'pull_request'
         uses: actions/github-script@v4
         with:
