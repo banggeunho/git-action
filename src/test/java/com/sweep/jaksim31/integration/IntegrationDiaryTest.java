@@ -64,6 +64,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = Jaksim31Application.class)
+@TestMethodOrder(value = MethodOrderer.OrderAnnotation.class) // 메소드 순서 지정
 class IntegrationDiaryTest {
     private static final String LOGIN_ID = "kjh@test.com";
     private static final String PASSWORD = "password";
