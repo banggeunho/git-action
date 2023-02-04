@@ -133,8 +133,8 @@ jobs:
      # 이전 Job에서 업로드한 Jar file 다운로드
       - name : Download a built Jar File
         uses: actions/download-artifact@v1
-          with:
-            name: target
+        with:
+          name: target
 
       # Docker Buildx Setting
       - name: Set up Docker Buildx
