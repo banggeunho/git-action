@@ -28,17 +28,6 @@ on:
 jobs:
   ###### 본문 내용과 관련 없는 Job, 빌드 테스트
   Backend-CI:
-    services:
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options:
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     env:
       # KEY - VALUE
       SONARQUBE_ID: jaksim31
@@ -48,6 +37,14 @@ jobs:
     runs-on: macos-latest
     # 각 단계
     steps:
+      # 레디스 설치 및 시작
+      - name: Start Redis
+        if: contains(github.ref, 'main')
+        uses: supercharge/redis-github-action@1.4.0
+        with:
+          redis-version: ${{ matrix.redis-version }}
+          redis-port: 6379
+
       # 소스코드 체크아웃
       - name: Checkout source code
         uses: actions/checkout@v2
