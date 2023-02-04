@@ -33,7 +33,7 @@ jobs:
       SONARQUBE_ID: jaksim31
       SONARQUBE_URL: ${{ secrets.SONARQUBE_URL }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
-    # ubuntu 환경에서 실행 (환경은 github이 제공)
+    # macos 환경에서 CI 실행 (환경은 github이 제공)
     runs-on: macos-latest
     # 각 단계
     steps:
@@ -123,7 +123,7 @@ jobs:
     # main 브랜치에 push 하는 경우에만 배포 JOB 실행
     if: github.event_name == 'push' && contains(github.ref, 'main')
     needs: Backend-CI
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
 
       # 소스코드 가져오기
