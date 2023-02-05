@@ -96,7 +96,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-result
-          path: target
+          path: target/
 
   Report-Test-Result:
     if: github.event_name == 'pull_request'
