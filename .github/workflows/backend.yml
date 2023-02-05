@@ -118,6 +118,11 @@ jobs:
         with:
           name: test-result
 
+      - name: check dir
+        run: |
+           ls -al
+           ls test-result
+
       - name: (PR) Write the testing result on PR
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         if: always() && github.event_name == 'pull_request'
@@ -161,6 +166,10 @@ jobs:
         with:
           name: classes
 
+      - name: check dir
+        run: |
+          ls -al
+          ls classes
       # 위에서 설정했던 정적코드 전송 태스크 실행
       - name: (PR) Sonarqube Analysis
         if: always() && github.event_name == 'pull_request'
