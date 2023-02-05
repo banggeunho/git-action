@@ -1,4 +1,4 @@
-package com.sweep.jaksim31.config;
+package com.sweep.jaksim31.config.cache;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -13,58 +13,50 @@ import com.sweep.jaksim31.adapter.cache.MemberCacheSerializer;
 import com.sweep.jaksim31.dto.diary.DiaryInfoResponse;
 import com.sweep.jaksim31.dto.diary.DiaryResponse;
 import com.sweep.jaksim31.dto.member.MemberInfoResponse;
-import io.lettuce.core.ClientOptions;
-import io.lettuce.core.SocketOptions;
-import org.springframework.beans.factory.annotation.Value;
+import io.lettuce.core.ReadFrom;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.RedisStaticMasterReplicaConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.*;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Profile("prod")
 @Configuration
-@EnableCaching
-public class CacheConfig {
-
-    @Value("${spring.redis.host}")
-    private String host;
-
-    @Value("${spring.redis.port}")
-    private int port;
+@RequiredArgsConstructor
+public class ProdCacheConfig {
+    private final RedisInfo info;
 
     @Bean
-    public RedisConnectionFactory basicCacheRedisConnectionFactory() {
-        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
-
-        final SocketOptions socketOptions = SocketOptions.builder().connectTimeout(Duration.ofSeconds(10)).build();
-        final ClientOptions clientOptions = ClientOptions.builder().socketOptions(socketOptions).build();
-
-        LettuceClientConfiguration lettuceClientConfiguration = LettuceClientConfiguration.builder()
-                .clientOptions(clientOptions)
-                .commandTimeout(Duration.ofSeconds(5))
-                .shutdownTimeout(Duration.ZERO)
+    public LettuceConnectionFactory redisConnectionFactory(){
+        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+                .readFrom(ReadFrom.REPLICA_PREFERRED)	// replica에서 우선적으로 읽지만 replica에서 읽어오지 못할 경우 Master에서 읽어옴
                 .build();
-
-        return new LettuceConnectionFactory(configuration, lettuceClientConfiguration);
+        // replica 설정
+        RedisStaticMasterReplicaConfiguration slaveConfig = new RedisStaticMasterReplicaConfiguration(info.getMaster().getHost(), info.getMaster().getPort());
+        // 설정에 slave 설정 값 추가
+        info.getSlaves().forEach(slave -> slaveConfig.addNode(slave.getHost(), slave.getPort()));
+        return new LettuceConnectionFactory(slaveConfig, clientConfig);
     }
 
     @Bean
     public RedisTemplate<String, RestPage<DiaryInfoResponse>> diaryPageCacheRedisTemplate() {
         RedisTemplate<String, RestPage<DiaryInfoResponse>> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(basicCacheRedisConnectionFactory());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new DiaryPagingCacheSerializer());
 
@@ -74,7 +66,7 @@ public class CacheConfig {
     @Bean
     public RedisTemplate<String, DiaryResponse> diaryCacheRedisTemplate() {
         RedisTemplate<String, DiaryResponse> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(basicCacheRedisConnectionFactory());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new DiaryCacheSerializer());
 
@@ -84,7 +76,7 @@ public class CacheConfig {
     @Bean
     public RedisTemplate<String, String> refreshTokenCacheRedisTemplate() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(basicCacheRedisConnectionFactory());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
 
@@ -94,7 +86,7 @@ public class CacheConfig {
     @Bean
     public RedisTemplate<String, MemberInfoResponse> memberCacheRedisTemplate() {
         RedisTemplate<String, MemberInfoResponse> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(basicCacheRedisConnectionFactory());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new MemberCacheSerializer());
 
@@ -136,14 +128,9 @@ public class CacheConfig {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new MemberCacheSerializer()))); // 30분
 
         return RedisCacheManager.RedisCacheManagerBuilder
-                .fromConnectionFactory(basicCacheRedisConnectionFactory())
+                .fromConnectionFactory(redisConnectionFactory())
                 .cacheDefaults(defaultConfig)
                 .withInitialCacheConfigurations(configurations)
                 .build();
     }
-
-//    @Bean
-//    public DiaryKeyGenerator diaryKeyGenerator() {
-//        return new DiaryKeyGenerator();
-//    }
 }
