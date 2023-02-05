@@ -118,21 +118,18 @@ jobs:
         with:
           name: test-result
 
-      - name: check dir
-        run: ls -al
-
       - name: (PR) Write the testing result on PR
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         if: always() && github.event_name == 'pull_request'
         with:
-          junit_files: './target/surefire-reports/TEST-*.xml'
+          junit_files: '**/test-result/target/surefire-reports/TEST-*.xml'
           comment_title: 'Jaksim31 Unit & Integration Test Results'
 
       - name: (PR) Check Comment on the Code line.
         uses: mikepenz/action-junit-report@v3
         if: always() && github.event_name == 'pull_request'
         with:
-          report_paths: './target/surefire-reports/TEST-*.xml'
+          report_paths: '**/test-result/target/surefire-reports/TEST-*.xml'
           token: ${{ secrets.SUBMODULE_ACCESS_TOKEN }}
 
 
@@ -143,6 +140,7 @@ jobs:
       # KEY - VALUE
       SONARQUBE_ID: jaksim31
       SONARQUBE_URL: ${{ secrets.SONARQUBE_URL }}
+      SONARQUBE_BINARIES: classes/target/classes
       PR_NUMBER: ${{ github.event.pull_request.number }}
       # macos 환경에서 CI 실행 (환경은 github이 제공)
     runs-on: ubuntu-latest
@@ -163,13 +161,10 @@ jobs:
         with:
           name: classes
 
-      - name: check dir
-        run: ls -al
-
       # 위에서 설정했던 정적코드 전송 태스크 실행
       - name: (PR) Sonarqube Analysis
         if: always() && github.event_name == 'pull_request'
-        run: ./mvnw sonar:sonar -Dsonar.host.url=${{ env.SONARQUBE_URL }} -Dsonar.projectKey=${{ env.SONARQUBE_ID }} -Dsonar.projectName=${{ env.SONARQUBE_ID }}-${{ env.PR_NUMBER }} -Dsonar.login=${{ secrets.SONARQUBE_ACCESS_TOKEN }}
+        run: ./mvnw sonar:sonar -Dsonar.java.binaries=${{ env.SONARQUBE_BINARIES }} -Dsonar.host.url=${{ env.SONARQUBE_URL }} -Dsonar.projectKey=${{ env.SONARQUBE_ID }} -Dsonar.projectName=${{ env.SONARQUBE_ID }}-${{ env.PR_NUMBER }} -Dsonar.login=${{ secrets.SONARQUBE_ACCESS_TOKEN }}
 
       - name: (PR) Comment Sonarqube URL
         if: always() && github.event_name == 'pull_request'
