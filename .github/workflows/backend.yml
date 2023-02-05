@@ -92,11 +92,11 @@ jobs:
           path: target/*.jar
 
       - name: (PR) Archive test results artifacts
-          if: github.event_name == 'pull_request'
-          uses: actions/upload-artifact@v3
-          with:
-            name: test-result
-            path: target
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-result
+          path: target
 
   Report-Test-Result:
     if: github.event_name == 'pull_request'
