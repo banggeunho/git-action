@@ -96,7 +96,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-result
-          path: target/
+          path: target/surefire-reports/
+
+      - name: (PR) Archive test results artifacts
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v3
+        with:
+          name: classes
+          path: target/classes/
 
   Report-Test-Result:
     if: github.event_name == 'pull_request'
@@ -111,18 +118,21 @@ jobs:
         with:
           name: test-result
 
+      - name: check dir
+        run: ls -al
+
       - name: (PR) Write the testing result on PR
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         if: always() && github.event_name == 'pull_request'
         with:
-          junit_files: '**/target/surefire-reports/TEST-*.xml'
+          junit_files: './target/surefire-reports/TEST-*.xml'
           comment_title: 'Jaksim31 Unit & Integration Test Results'
 
       - name: (PR) Check Comment on the Code line.
         uses: mikepenz/action-junit-report@v3
         if: always() && github.event_name == 'pull_request'
         with:
-          report_paths: '**/target/surefire-reports/TEST-*.xml'
+          report_paths: './target/surefire-reports/TEST-*.xml'
           token: ${{ secrets.SUBMODULE_ACCESS_TOKEN }}
 
 
@@ -151,7 +161,10 @@ jobs:
       - name: Download a test result
         uses: actions/download-artifact@v1
         with:
-          name: test-result
+          name: classes
+
+      - name: check dir
+        run: ls -al
 
       # 위에서 설정했던 정적코드 전송 태스크 실행
       - name: (PR) Sonarqube Analysis
