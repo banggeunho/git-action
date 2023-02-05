@@ -118,19 +118,15 @@ jobs:
         with:
           name: test-result
 
-      - name: check dir
-        run: |
-           ls -al
-           ls test-result
-
-      - name: (PR) Write the testing result on PR
+      - name: Write the testing result on PR
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         if: always() && github.event_name == 'pull_request'
         with:
           junit_files: '**/test-result/TEST-*.xml'
           comment_title: 'Jaksim31 Unit & Integration Test Results'
+          token: ${{ secrets.SUBMODULE_ACCESS_TOKEN }}
 
-      - name: (PR) Check Comment on the Code line.
+      - name: Check Comment on the Code line.
         uses: mikepenz/action-junit-report@v3
         if: always() && github.event_name == 'pull_request'
         with:
@@ -166,16 +162,12 @@ jobs:
         with:
           name: classes
 
-      - name: check dir
-        run: |
-          ls -al
-          ls classes
       # 위에서 설정했던 정적코드 전송 태스크 실행
-      - name: (PR) Sonarqube Analysis
+      - name: Sonarqube Analysis
         if: always() && github.event_name == 'pull_request'
         run: ./mvnw sonar:sonar -Dsonar.java.binaries=${{ env.SONARQUBE_BINARIES }} -Dsonar.host.url=${{ env.SONARQUBE_URL }} -Dsonar.projectKey=${{ env.SONARQUBE_ID }} -Dsonar.projectName=${{ env.SONARQUBE_ID }}-${{ env.PR_NUMBER }} -Dsonar.login=${{ secrets.SONARQUBE_ACCESS_TOKEN }}
 
-      - name: (PR) Comment Sonarqube URL
+      - name: Comment Sonarqube URL
         if: always() && github.event_name == 'pull_request'
         uses: actions/github-script@v4
         with:
