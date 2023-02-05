@@ -13,7 +13,7 @@
 # ${{ secrets.REMOTE_USERNAME }} : 배포 서버 USERNAME
 # ${{ secrets.REMOTE_SSH_KEY }} : 배포 서버 연결을 위한 SSH KEY
 
-name: Backend CI & CD (Pull request on develop, main) (push on main)
+name: Backend CI & CD
 
 # PR 요청에 대해
 on:
@@ -65,9 +65,9 @@ jobs:
       - name: Grant execute permission for maven
         run: chmod +x mvnw
 
-      - name: check
-        run : | 
-            cat submodule/resources/main/prod/application.yml
+#      - name: check
+#        run : |
+#            cat submodule/resources/main/prod/application.yml
 
       # develop 브랜치일 경우 local 환경 빌드
       - name: (PR) Maven Build (Adding Unit Test & Integration Test)
@@ -95,7 +95,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         if: always() && github.event_name == 'pull_request'
         with:
-          files: '**/target/surefire-reports/TEST-*.xml'
+          junit_files: '**/target/surefire-reports/TEST-*.xml'
           comment_title: 'Jaksim31 Unit & Integration Test Results'
 
       - name: (PR) Check Comment on the Code line.
